@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Patatap</title>
+
+		<!--CSS-->
+		<link rel = "stylesheet"  href = "css/style.css" type = "text/css">
+
+		<!--paper.js file--> <!-- IMPORT ANIMATION, GRAPHICS LIBARY-->
+		<script src = "javascript/lib/paper-full.js" type = "text/javascript"></script>
+
+		<!--howler.js file(VER 1.1.28 **OLD**)--> <!--IMPORT SOUND MANIPULATION LIBRARY(CDN)-->	
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/1.1.28/howler.js"></script>
+
+		<!--paper.js Javascript-->
+		
+		<script type="text/paperscript" canvas="myCanvas"> // LINK <canvas id = "myCanvas"></canvas> TAG TO THIS SCRIPT
+
+			/*
+				USE 'var' WHEN CREATING VARIABLES
+ 				CANNOT USE 'let' TYPE IN PAPER.JS
+			*/
+			
+			//SOUNDS USING 'howler.js'
+			/*
+				* Using the methods in the 'howler.js' file we can associate sounds to keys.
+
+				* We create a directory of keys stored in the object 'keyData' and assign each key an individual. We also   
+				  assign specific colors to each key as well.
+			*/
+
+			var keyData = {
+
+				q: {
+					sound: new Howl({
+			  		urls: ['sounds/bubbles.mp3']
+					}),
+					color: '#1abc9c'
+				},
+				w: {
+					sound: new Howl({
+			  		urls: ['sounds/clay.mp3']
+					}),
+					color: '#2ecc71'
+				},
+				e: {
+					sound: new Howl({
+			  		urls: ['sounds/confetti.mp3']
+					}),
+					color: '#3498db'
+				},
+				r: {
+					sound: new Howl({
+			  		urls: ['sounds/corona.mp3']
+					}),
+					color: '#9b59b6'
+				},
+					t: {
+					sound: new Howl({
+			  		urls: ['sounds/dotted-spiral.mp3']
+					}),
+					color: '#34495e'
+				},
+				y: {
+					sound: new Howl({
+			  		urls: ['sounds/flash-1.mp3']
+					}),
+					color: '#16a085'
+				},
+				u: {
+					sound: new Howl({
+			  		urls: ['sounds/flash-2.mp3']
+					}),
+					color: '#27ae60'
+				},
+				i: {
+					sound: new Howl({
+			  		urls: ['sounds/flash-3.mp3']
+					}),
+					color: '#2980b9'
+				},
+				o: {
+					sound: new Howl({
+						urls: ['sounds/glimmer.mp3']
+					}),
+					color: '#8e44ad'
+				},
+				p: {
+					sound: new Howl({
+			  		urls: ['sounds/moon.mp3']
+					}),
+					color: '#2c3e50'
+				},
+				a: {
+					sound: new Howl({
+			  		urls: ['sounds/pinwheel.mp3']
+					}),
+					color: '#f1c40f'
+				},
+				s: {
+					sound: new Howl({
+			  		urls: ['sounds/piston-1.mp3']
+					}),
+					color: '#e67e22'
+				},
+					d: {
+					sound: new Howl({
+			  		urls: ['sounds/piston-2.mp3']
+					}),
+					color: '#e74c3c'
+				},
+				f: {
+					sound: new Howl({
+			  		urls: ['sounds/prism-1.mp3']
+					}),
+					color: '#95a5a6'
+				},
+				g: {
+					sound: new Howl({
+			  		urls: ['sounds/prism-2.mp3']
+					}),
+					color: '#f39c12'
+				},
+				h: {
+					sound: new Howl({
+			  		urls: ['sounds/prism-3.mp3']
+					}),
+					color: '#d35400'
+				},
+				j: {
+					sound: new Howl({
+			  		urls: ['sounds/splits.mp3']
+					}),
+					color: '#1abc9c'
+				},
+				k: {
+					sound: new Howl({
+			  		urls: ['sounds/squiggle.mp3']
+					}),
+					color: '#2ecc71'
+				},
+				l: {
+					sound: new Howl({
+			  		urls: ['sounds/strike.mp3']
+					}),
+					color: '#3498db'
+				},
+				z: {
+					sound: new Howl({
+			  		urls: ['sounds/suspension.mp3']
+					}),
+					color: '#9b59b6'
+				},
+				x: {
+					sound: new Howl({
+			  		urls: ['sounds/timer.mp3']
+					}),
+					color: '#34495e'
+				},
+				c: {
+					sound: new Howl({
+			  		urls: ['sounds/ufo.mp3']
+					}),
+					color: '#16a085'
+				},
+				v: {
+					sound: new Howl({
+			  		urls: ['sounds/veil.mp3']
+					}),
+					color: '#27ae60'
+				},
+				b: {
+					sound: new Howl({
+			  		urls: ['sounds/wipe.mp3']
+					}),
+					color: '#2980b9'
+				},
+				n: {
+					sound: new Howl({
+						urls: ['sounds/zig-zag.mp3']
+					}),
+					color: '#8e44ad'
+				},
+				m: {
+					sound: new Howl({
+			  		urls: ['sounds/moon.mp3']
+					}),
+					color: '#2c3e50'
+				}
+			}// END 'keyData' 
+
+			
+			//ANIMATIONS USING 'paper.js'
+			/*
+				* Using 'paper.js' library, we make use of methods to create animations and display them on our canvas.
+				* In this case we create circles and store them in an array. Using the methods in 'paper.js' we animate our array of 
+				  circles and pair them with our sounds using 'howler.js'.
+			*/
+
+
+			//ARRAY TO CONTAIN OUR CIRCLES
+
+			var circles = [];
+
+
+			//KEYPRESS EVENT
+
+			function onKeyDown(event) { 
+
+				if(keyData[event.key]){ //IF THERE IS A KEY IN THE DICTIONARY OF 'keyData' RUN THIS CODE
+
+					//FIND THE MAXIMUM WIDTH AND HEIGHT OF OUR WINDOW ON ANY RESIZE
+					var maxPoint = new Point(view.size.width, view.size.height);
+
+					//GENERATE A RANDOM POINT
+					var randomPoint = Point.random(); //Point(x,y);
+
+					//CREATE A RANDOM POINT IN RELATION TO OUR CANVAS WINDOW
+					var point = maxPoint * randomPoint;
+
+					//CREATE A NEW CIRCLE
+					var newCircle = new Path.Circle(new Point(point), 500);
+
+					//DEFINE A COLOR FOR OUR CIRCLE;
+					newCircle.fillColor = keyData[event.key].color;
+
+					//RETRIEVE 'sound'AND USE 'play()'TO PLAY SOUND
+					keyData[event.key].sound.play();
+					
+
+					// WHEN A KEY IS PRESSED, CREATE A NEW CIRCLE ON THE SCREEN, PUSH/ADD THAT CIRCLE INTO
+					//OUR 'circles[]' 
+					circles.push(newCircle);
+
+				}
+
+			} //END 'onKeyDown' FUNCTION
+
+			function onFrame(event) {
+
+				//LOOP TO CHANGE HUE AND SCALE OUR CIRCLES IN THE 'circle[]'
+
+				for(var i = 0; i < circles.length; i++){
+					
+					//AT EACH FRAME CHANGE THE HUE OF THE CIRCLE BY ADDING '1' 
+					circles[i].fillColor.hue += 1;
+
+					//SCALE OUR CIRCLES BY MULTIPLYING SIZE OF CIRCLE TO '.94'
+					circles[i].scale(.94);
+
+					if(circles[i].area < 1){
+						
+					      circles[i].remove(); // remove the circle from the canvas
+					      circles.splice(i, 1); // remove the circle from the array
+					      console.log(circles);
+
+					} //CONDITION TO REMOVE CIRCLES FROM ARRAY TO PREVENT LARGE COLLECTION OF CIRCLES IN 'circle[]' ARRAY
+
+				}// END 'for' LOOP
+
+			} //END 'onFrame' FUNCTION
+			
+
+		</script>
+	</head>
+
+	<body>
+		<!--CREATE A CANVAS TO CONTAIN OUR ANIMATIONS-->
+		<canvas id = "myCanvas" resize></canvas>
+	</body>
+</html>
